@@ -1,16 +1,11 @@
 # ============================================================
-# Dockerfile - PyTorch 深度学习开发环境
+# Dockerfile - 轻量级深度学习开发环境
 # ============================================================
-# 基于 PyTorch 官方镜像，添加常用开发工具和 SSH 支持
-# 
-# 基础环境：
-#   - PyTorch 2.1.2
-#   - CUDA 11.8
-#   - cuDNN 8
-#   - Python 3
+# 基于 Ubuntu 22.04，添加常用开发工具和 SSH 支持
+# CUDA、Python 包等由 uv 和外部安装管理
 # 
 # 已安装工具：
-#   - 编译工具: build-essential, gcc-11, g++-11
+#   - 编译工具: build-essential (含 gcc-11, g++-11)
 #   - 网络工具: openssh-server, curl, wget, iproute2
 #   - 开发工具: git, vim, screen, htop
 #   - 其他: jq, zip, unzip
@@ -21,8 +16,8 @@
 #   - 端口: 22 (容器内)
 # ============================================================
 
-# 使用 PyTorch 官方运行时镜像作为基础
-FROM pytorch/pytorch:2.1.2-cuda11.8-cudnn8-runtime
+# 使用纯净的 Ubuntu 22.04 作为基础镜像
+FROM ubuntu:22.04
 
 # 设置工作目录
 WORKDIR /root
@@ -36,19 +31,13 @@ ENV DEBIAN_FRONTEND=noninteractive \
 # ============================================================
 # 安装系统依赖包
 # ============================================================
-# 使用单个 RUN 命令减少镜像层数
+# Ubuntu 22.04 自带 GCC 11，无需额外添加 PPA
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        # 包管理工具
-        software-properties-common \
-        # 编译工具链
+        # 编译工具链（含 gcc-11, g++-11）
         build-essential \
         # Python 环境
         python3 \
-        python3-pip \
-        # 系统工具
-        binutils \
-        libstdc++6 \
         # 网络工具
         iputils-ping \
         openssh-client \
@@ -72,13 +61,6 @@ RUN apt-get update && \
         # OpenCV 依赖
         libgl1-mesa-glx \
         libglib2.0-0 && \
-    # 添加 Ubuntu Toolchain PPA 并安装 GCC 11
-    add-apt-repository ppa:ubuntu-toolchain-r/test && \
-    apt-get update && \
-    apt-get install -y gcc-11 g++-11 && \
-    # 设置 GCC 11 为默认编译器
-    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 100 && \
-    update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-11 100 && \
     # 清理 apt 缓存
     rm -rf /var/lib/apt/lists/*
 
