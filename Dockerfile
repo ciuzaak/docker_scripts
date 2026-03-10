@@ -51,6 +51,7 @@ RUN apt-get update && \
         tmux \
         htop \
         curl \
+	    wget \
         iproute2 \
         # 中文支持
         locales \
