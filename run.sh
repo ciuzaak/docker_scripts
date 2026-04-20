@@ -38,6 +38,7 @@ docker run -d -t \
     --gpus all \
     --ipc host \
     -v /etc/localtime:/etc/localtime:ro \
+    -v /etc/timezone:/etc/timezone:ro \
     -v "$HOME/root:/root" \
     -v /home:/home \
     --cap-add NET_ADMIN \
