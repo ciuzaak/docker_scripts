@@ -53,6 +53,7 @@ RUN apt-get update && \
         curl \
 	    wget \
         iproute2 \
+        bubblewrap \
         # 中文支持
         locales \
         language-pack-zh-hans \

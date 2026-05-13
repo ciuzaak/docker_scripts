@@ -37,6 +37,10 @@ docker run -d -t \
     -p 2222:22 \
     --gpus all \
     --ipc host \
+    --security-opt seccomp=unconfined \
+    --security-opt apparmor=unconfined \
+    --security-opt systempaths=unconfined \
+    --cap-add SYS_ADMIN \
     -v /etc/localtime:/etc/localtime:ro \
     -v /etc/timezone:/etc/timezone:ro \
     -v "$HOME/root:/root" \
