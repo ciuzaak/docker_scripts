@@ -7,7 +7,7 @@
 # 已安装工具：
 #   - 编译工具: build-essential (含 gcc-11, g++-11)
 #   - 网络工具: openssh-server, curl, iproute2
-#   - 开发工具: git, vim, tmux, htop
+#   - 开发工具: git, vim, tmux, htop, gh
 #   - 其他: jq, zip, unzip
 # 
 # SSH 配置：
@@ -46,6 +46,7 @@ RUN apt-get update && \
         vim \
         jq \
         git \
+        gh \
         zip \
         unzip \
         tmux \

@@ -45,6 +45,7 @@ docker run -d -t \
     -v /etc/timezone:/etc/timezone:ro \
     -v "$HOME/root:/root" \
     -v /home:/home \
+    -v /media:/media \
     --cap-add NET_ADMIN \
     --cap-add NET_RAW \
     --device /dev/net/tun:/dev/net/tun \
