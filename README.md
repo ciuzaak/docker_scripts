@@ -60,7 +60,7 @@ bash stop.sh
 
 ### 特殊权限
 
-- **GPU 支持**: `--gpus all`
+- **GPU 支持**: `--device nvidia.com/gpu=all`（CDI 方式，见下方注意事项）
 - **IPC 共享**: `--ipc host` (PyTorch 多进程数据加载)
 - **网络权限**: `NET_ADMIN`, `NET_RAW` (VPN/代理支持)
 - **TUN 设备**: `/dev/net/tun` (VPN 隧道)
@@ -86,6 +86,18 @@ bash stop.sh
 ## ⚠️ 注意事项
 
 1. **GPU 支持**: 需要安装 [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html)
+
+   本项目通过 **CDI**（Container Device Interface）挂载 GPU，而不是旧的 `--gpus all`。原因：在 cgroup v2 + systemd cgroup 驱动的主机上，使用 `--gpus` 启动的容器在 dockerd 重启或执行 `systemctl daemon-reload` 后会丢失 GPU 访问（`Failed to initialize NVML: Unknown Error`），CDI 方式不受影响。
+
+   - 指定 GPU：将 `run.sh` 中的 `--device nvidia.com/gpu=all` 改为 `--device nvidia.com/gpu=0 --device nvidia.com/gpu=1` 等
+   - 前置条件：主机需存在 CDI spec。用 `nvidia-ctk cdi list` 检查，若没有列出 `nvidia.com/gpu=...` 设备（即 `/var/run/cdi/nvidia.yaml` 和 `/etc/cdi` 均不存在），执行：
+
+     ```bash
+     sudo nvidia-ctk cdi generate --output=/etc/cdi/nvidia.yaml
+     nvidia-ctk cdi list
+     ```
+
+   - 推荐（可选）：在 `/etc/docker/daemon.json` 中加入 `"live-restore": true`，然后执行 `sudo systemctl reload docker`，这样 dockerd 重启时容器保持运行
 
 2. **数据持久化**: 重要数据请保存在挂载的卷目录中
 
